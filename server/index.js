@@ -10,7 +10,7 @@ app.use(Cors())
 
 app.use("/user", userRoutes)
 app.use("/student", studentRoutes)
-app.use("/join", livekiteRoutes)
+app.use("/livekit", livekiteRoutes)
 
 
 const port = process.env.PORT || 5000;

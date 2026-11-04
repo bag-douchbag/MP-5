@@ -59,3 +59,48 @@ export const registerStudent = async(req, res) => {
     }
 }
 
+export const getStudentInfo = async (req, res) => {
+
+    try {
+
+        const { studentid } = req.params
+
+        if (!studentid || !/^\d{10}$/.test(studentid)) {
+            return res.status(422).json({
+                status: "failure",
+                message: "Invalid student ID"
+            })
+        }
+
+        const student = await studentModel.findOne({
+            studentid: Number(studentid)
+        }).select("-_id -__v")
+
+        if (!student) {
+            return res.status(404).json({
+                status: "failure",
+                message: "Student not found"
+            })
+        }
+
+        return res.status(200).json({
+            status: "success",
+            message: "Student found successfully",
+            student: {
+                studentid: student.studentid,
+                studentname: student.studentname,
+                studentcourse: student.studentcourse,
+                semester: student.semester
+            }
+        })
+
+    } catch (error) {
+
+        console.error("getStudentInfo error:", error)
+
+        return res.status(500).json({
+            status: "failure",
+            message: "Internal server error"
+        })
+    }
+}

@@ -1,8 +1,7 @@
-
 import { AccessToken } from "livekit-server-sdk"
 import studentModel from "../models/studentModel.js"
 
-const joinRoom = async (req, res) => {
+export const  joinRoom = async (req, res) => {
 
     try {
 
@@ -62,4 +61,4 @@ const joinRoom = async (req, res) => {
     }
 }
 
-export default joinRoom
+export defail

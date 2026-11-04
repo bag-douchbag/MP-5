@@ -1,0 +1,13 @@
+
+
+  *  user Routes 
+        http://localhost:3000/user/sign-in
+        http;//localhost:3000/user/sign-up
+
+
+  * student Routes
+        http://localhost:3000/student/create-student
+
+
+  * video-confrencing Routes
+        http://localhost:3000/livkit/join
