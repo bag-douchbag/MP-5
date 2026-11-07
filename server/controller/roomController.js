@@ -25,6 +25,10 @@ export const  joinRoom = async (req, res) => {
 
         const roomName = `semester-${student.semester}`
 
+        console.log("LIVEKIT_API_KEY:", process.env.LIVEKIT_API_KEY ? "FOUND" : "MISSING")
+        console.log("LIVEKIT_API_SECRET:", process.env.LIVEKIT_API_SECRET ? "FOUND" : "MISSING")
+        console.log("LIVEKIT_URL:", process.env.LIVEKIT_URL ? "FOUND" : "MISSING")
+
         const token = new AccessToken(
             process.env.LIVEKIT_API_KEY,
             process.env.LIVEKIT_API_SECRET,
@@ -61,4 +65,3 @@ export const  joinRoom = async (req, res) => {
     }
 }
 
-export defail

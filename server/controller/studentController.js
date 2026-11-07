@@ -4,6 +4,8 @@ export const registerStudent = async(req, res) => {
 
     try {
 
+        console.log("reached the registerStudent function")
+
         const { studentname, contactno, semester } = req.body;
 
         if(!studentname || !contactno || semester == null){

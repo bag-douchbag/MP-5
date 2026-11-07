@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { X, UserPlus } from "lucide-react"
 import toast from "react-hot-toast"
@@ -19,8 +20,8 @@ const CreateStudent = ({ onClose }) => {
             return
         }
 
-        if (studentname.trim().length < 2) {
-            toast.error("Student name must contain at least 2 characters")
+        if (studentname.trim().length < 3 || studentname.trim().length > 25) {
+            toast.error("Student name must be between 3 and 25 characters")
             return
         }
 
@@ -33,7 +34,7 @@ const CreateStudent = ({ onClose }) => {
 
             setLoading(true)
 
-            const response = await fetch("http://localhost:3000/api/students/create", {
+            const response = await fetch("http://localhost:5000/students/create-student", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -54,7 +55,7 @@ const CreateStudent = ({ onClose }) => {
                 return
             }
 
-            setCreatedStudent(data.data)
+            setCreatedStudent(data.student)
             toast.success("Student created successfully!")
 
         } catch (error) {

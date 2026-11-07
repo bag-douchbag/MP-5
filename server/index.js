@@ -1,18 +1,38 @@
+import "dotenv/config"
+
 import express from "express"
-import userRoutes from "./Router/userRoutes"
-import studentRoutes from "./Router/studentRoutes"
-import livekiteRoutes from "./Router/roomRoutes"
+import cors from "cors"
+import dotenv from "dotenv"
+import userRoutes from "./Router/userRoutes.js"
+import studentRoutes from "./Router/studentRoutes.js"
+import livekiteRoutes from "./Router/roomRoutes.js"
+import { connectDB } from "./database/database.js"
 
 const app = express()
 
-app.use(express.json())
-app.use(Cors())
 
-app.use("/user", userRoutes)
-app.use("/student", studentRoutes)
+dotenv.config({ path: "./.env" })
+
+app.use(express.json())
+app.use(cors())
+
+app.use("/users", userRoutes)
+app.use("/students", studentRoutes)
 app.use("/livekit", livekiteRoutes)
 
+const port = process.env.PORT || 5000
 
-const port = process.env.PORT || 5000;
+const startServer = async () => {
+    try {
+        await connectDB()
 
-app.listen(port, () => `Server running on port ${port} 🔥`);
+        app.listen(port, () => {
+            console.log(`Server running on port ${port} 🔥`)
+        })
+
+    } catch (error) {
+        console.log("Database connection failed:", error)
+    }
+}
+
+startServer()

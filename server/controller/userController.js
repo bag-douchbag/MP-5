@@ -16,14 +16,17 @@ export const signup = async (req, res) => {
             });
         }
 
-        const existingUser = await User.findOne({ username: username.trim() });
 
-        if (existingUser) {
-            return res.status(409).json({
-                status: "failure",
-                message: "Username already exists!"
-            });
-        }
+        console.log("this is working1")
+        //const existingUser = await User.findOne({ username: username.trim() });
+
+        // if (existingUser) {
+        //     return res.status(409).json({
+        //         status: "failure",
+        //         message: "Username already exists!"
+        //     });
+        // }
+        console.log("this is working2")
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -31,6 +34,7 @@ export const signup = async (req, res) => {
             username: username.trim(),
             password: hashedPassword
         });
+        console.log("this is working3")
 
         return res.status(201).json({
             status: "success",
@@ -52,7 +56,7 @@ export const signup = async (req, res) => {
         }
 
         return res.status(500).json({
-            status: "failure",
+            status: "failure2",
             message: error.message
         });
     }

@@ -1,5 +1,5 @@
 import express from "express"
-import { registerStudent } from "../controller/studentController"
+import { registerStudent, getStudentInfo } from "../controller/studentController.js"
 
 const studentRoutes = express.Router()
 

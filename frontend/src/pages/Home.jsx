@@ -21,7 +21,7 @@ const Home = () => {
             const token = localStorage.getItem("token")
             if (!token) return
 
-            const response = await fetch("http://localhost:3000/auth/me", {
+            const response = await fetch("http://localhost:5000/auth/me", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`

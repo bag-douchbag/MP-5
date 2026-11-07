@@ -15,7 +15,7 @@ const SignIn = () => {
             return
         }
 
-        const response = await fetch("http://localhost:3000", {
+        const response = await fetch("http://localhost:5000/users/sign-in", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

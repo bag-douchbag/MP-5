@@ -42,10 +42,12 @@ studentSchema.pre("validate", async function () {
     const counter = await Counter.findOneAndUpdate(
         { _id: "studentid" },
         {
-            $inc: { sequence: 1 },
-            $setOnInsert: { sequence: 999999999 }
+            $inc: { sequence: 1 }
         },
-        { new: true, upsert: true, setDefaultsOnInsert: false }
+        { 
+            new: true, 
+            upsert: true 
+        }
     );
 
     this.studentid = counter.sequence;
