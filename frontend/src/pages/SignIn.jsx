@@ -1,39 +1,63 @@
+
 import { useState } from "react"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import toast from "react-hot-toast"
 
 const SignIn = () => {
 
+    const navigate = useNavigate()
+
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleSignIn = async(e) => {
+
         e.preventDefault()
 
         if(!username.trim() || !password.trim()){
-            toast.error("all fields are required!!")
+            toast.error("All fields are required!!")
             return
         }
 
-        const response = await fetch("http://localhost:5000/users/sign-in", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ username, password })
-        })
+        try {
 
-        const data = await response.json()
+            setLoading(true)
 
-        if(data.status === "failure"){
-            toast.error("invalid credentials!!")
-        }else{
-            toast.success("login-success!!")
+            const response = await fetch("http://localhost:5000/users/sign-in", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            })
+
+            const data = await response.json()
+
+            if(!response.ok || data.status === "failure"){
+                toast.error(data.message || "Invalid credentials!!")
+                return
+            }
+
+            localStorage.setItem("token", data.token)
+            localStorage.setItem("username", data.user.username)
+
+            toast.success("Login successful!")
+
+            navigate("/")
+
+        } catch(error) {
+
+            toast.error("Something went wrong! Please try again later")
+            console.log(error)
+
+        } finally {
+            setLoading(false)
         }
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-black px-4">
 
             <div className="w-full max-w-md rounded-2xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
 
@@ -52,6 +76,7 @@ const SignIn = () => {
                         <label htmlFor="username" className="mb-2 block text-sm font-medium text-gray-200">
                             Username
                         </label>
+
                         <input
                             type="text"
                             id="username"
@@ -66,6 +91,7 @@ const SignIn = () => {
                         <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-200">
                             Password
                         </label>
+
                         <input
                             type="password"
                             id="password"
@@ -78,20 +104,21 @@ const SignIn = () => {
 
                     <button
                         type="submit"
-                        className="w-full rounded-xl bg-indigo-500 py-3 font-semibold text-white shadow-lg transition hover:bg-indigo-400 active:scale-[0.98]"
+                        disabled={loading}
+                        className="w-full rounded-xl bg-indigo-500 py-3 font-semibold text-white shadow-lg transition hover:bg-indigo-400 active:scale-[0.98] disabled:opacity-50"
                     >
-                        Sign In
+                        {loading ? "Signing In..." : "Sign In"}
                     </button>
 
                 </form>
 
-            <p className="mt-8 text-center text-sm text-gray-300">
-                New here?
-                <Link to="/sign-up" className="mx-2 font-semibold text-indigo-300 transition hover:text-white">
-                    Sign Up
-                </Link>
-                here
-            </p>
+                <p className="mt-8 text-center text-sm text-gray-300">
+                    New here?
+                    <Link to="/sign-up" className="mx-2 font-semibold text-indigo-300 transition hover:text-white">
+                        Sign Up
+                    </Link>
+                    here
+                </p>
 
             </div>
         </div>

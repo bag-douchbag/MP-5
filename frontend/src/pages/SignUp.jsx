@@ -1,11 +1,15 @@
+
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 const SignUp = () => {
 
+    const navigate = useNavigate()
+
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handelSignUP = async(e) => {
 
@@ -17,6 +21,9 @@ const SignUp = () => {
         }
 
         try {
+
+            setLoading(true)
+
             const response = await fetch("http://localhost:5000/users/sign-up", {
                 method: "POST",
                 headers: {
@@ -32,13 +39,20 @@ const SignUp = () => {
                 return
             }
 
-            toast.success(data.message || "Signup successful!")
-            setUsername("")
-            setPassword("")
+            localStorage.setItem("token", data.token)
+            localStorage.setItem("username", data.user.username)
+
+            toast.success("Signup successful!")
+
+            navigate("/")
 
         } catch(error) {
+
             toast.error("Something went wrong! Please try again later")
             console.log(error)
+
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -57,10 +71,12 @@ const SignUp = () => {
                 </div>
 
                 <form onSubmit={handelSignUP} className="space-y-6">
+
                     <div>
                         <label htmlFor="username" className="block text-sm font-semibold text-gray-200 mb-2">
                             Username
                         </label>
+
                         <input
                             type="text"
                             id="username"
@@ -75,6 +91,7 @@ const SignUp = () => {
                         <label htmlFor="password" className="block text-sm font-semibold text-gray-200 mb-2">
                             Password
                         </label>
+
                         <input
                             type="password"
                             id="password"
@@ -87,10 +104,12 @@ const SignUp = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-600 active:scale-[0.98] transition duration-300 shadow-lg shadow-blue-500/20"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-600 active:scale-[0.98] transition duration-300 shadow-lg shadow-blue-500/20 disabled:opacity-50"
                     >
-                        Create Account
+                        {loading ? "Creating Account..." : "Create Account"}
                     </button>
+
                 </form>
 
                 <p className="text-center text-sm text-gray-400 mt-8">

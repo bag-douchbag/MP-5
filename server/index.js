@@ -14,7 +14,10 @@ const app = express()
 dotenv.config({ path: "./.env" })
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin:"https://perucreations.tech",
+    credentials: true
+}))
 
 app.use("/users", userRoutes)
 app.use("/students", studentRoutes)

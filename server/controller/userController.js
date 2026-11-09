@@ -1,12 +1,9 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "../models/userModel.js";
-import studentModel from "../models/studentModel.js";
+import { generateToken } from "../JWT/token.js";
 
 export const signup = async (req, res) => {
-
     try {
-
         const { username, password } = req.body;
 
         if (!username || !password) {
@@ -16,17 +13,14 @@ export const signup = async (req, res) => {
             });
         }
 
+        const existingUser = await User.findOne({ username: username.trim() });
 
-        console.log("this is working1")
-        //const existingUser = await User.findOne({ username: username.trim() });
-
-        // if (existingUser) {
-        //     return res.status(409).json({
-        //         status: "failure",
-        //         message: "Username already exists!"
-        //     });
-        // }
-        console.log("this is working2")
+        if (existingUser) {
+            return res.status(409).json({
+                status: "failure",
+                message: "Username already exists!"
+            });
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -34,11 +28,15 @@ export const signup = async (req, res) => {
             username: username.trim(),
             password: hashedPassword
         });
-        console.log("this is working3")
+
+        const token = generateToken({
+            id: user._id
+        });
 
         return res.status(201).json({
             status: "success",
             message: "User registered successfully!",
+            token,
             user: {
                 _id: user._id,
                 username: user.username,
@@ -47,7 +45,6 @@ export const signup = async (req, res) => {
         });
 
     } catch (error) {
-
         if (error.code === 11000) {
             return res.status(409).json({
                 status: "failure",
@@ -56,62 +53,54 @@ export const signup = async (req, res) => {
         }
 
         return res.status(500).json({
-            status: "failure2",
-            message: error.message
-        });
-    }
-};
-
-
-export const signin = async (req, res) => {
-
-    try {
-
-        const { username, password } = req.body;
-
-        if (!username || !password) {
-            return res.status(422).json({
-                status: "failure",
-                message: "Username and password are required!"
-            });
-        }
-
-        const user = await User.findOne({ username: username.trim() });
-
-        if (!user) {
-            return res.status(401).json({
-                status: "failure",
-                message: "Invalid username or password!"
-            });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordValid) {
-            return res.status(401).json({
-                status: "failure",
-                message: "Invalid username or password!"
-            });
-        }
-
-        return res.status(200).json({
-            status: "success",
-            message: "Login successful!",
-            user: {
-                _id: user._id,
-                username: user.username,
-                studentId: user.studentId
-            }
-        });
-
-    } catch (error) {
-
-        return res.status(500).json({
             status: "failure",
             message: error.message
         });
     }
 };
 
+export const signin = async (req, res) => {
+    try {
+        const { username, password } = req.body;
 
+        // Fixed: changed userModel to User to match the import at the top
+        const user = await User.findOne({ username });
+        
+        if (!user) {
+            return res.status(400).json({
+                status: "failure",
+                message: "Invalid credentials!!"
+            });
+        }
 
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                status: "failure",
+                message: "Invalid credentials!!"
+            });
+        }
+
+        const token = generateToken({
+            id: user._id,
+            username: user.username
+        });
+
+        return res.status(200).json({
+            status: "success",
+            message: "Login successful!",
+            token,
+            user: {
+                id: user._id,
+                username: user.username
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: "failure",
+            message: "Internal server error"
+        });
+    }
+};  

@@ -5,6 +5,9 @@ export const  joinRoom = async (req, res) => {
 
     try {
 
+
+        console.log("Authenticated user:", req.userID)
+
         const { studentid } = req.body
 
         if (!studentid || !/^\d+$/.test(String(studentid))) {
